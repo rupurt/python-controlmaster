@@ -1,23 +1,29 @@
-import sys
 import os
-import string
 import random
+import signal
+import string
 import subprocess
+import sys
 import threading
 import time
-import signal
+from typing import Any
 
 
 class ControlMaster:
-    host = ""
-    status = ""
-    master_socket = ""
-    controldir = ""
-    debug = False
-    masterpid = 0
-    cmdpid = 0
+    host: str = ""
+    status: str = ""
+    master_socket: str = ""
+    controldir: str = ""
+    debug: bool = False
+    masterpid: int = 0
+    cmdpid: int = 0
 
-    def __init__(self, hostname, master_socket="", debug=False):
+    def __init__(
+        self,
+        hostname: str,
+        master_socket: str = "",
+        debug: bool = False,
+    ):
         self.ifdebug("in init")
         self.host = hostname
         self.check_control_dir()
@@ -30,11 +36,11 @@ class ControlMaster:
             self.master_socket = self.controldir + "/" + master_socket
         self.debug = debug
 
-    def ifdebug(self, args):
+    def ifdebug(self, args: str) -> None:
         if self.debug:
             print(args)
 
-    def cmd(self, args):
+    def cmd(self, args: Any) -> int:
         self.ifdebug("in cmd: executing %s" % args)
         try:
             p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -47,7 +53,7 @@ class ControlMaster:
             print("in cmd: Execution failed: ", e, file=sys.stderr)
         return retcode
 
-    def checkauth(self):
+    def checkauth(self) -> bool:
         self.ifdebug("in checkauth")
         if not os.path.exists(self.master_socket):
             self.ifdebug("in checkauth: FAIL: NOFILE")
@@ -58,7 +64,7 @@ class ControlMaster:
             return False
         return True
 
-    def connect(self):
+    def connect(self) -> bool:
         self.ifdebug("in connect")
         if self.checkauth():
             return True
@@ -84,7 +90,7 @@ class ControlMaster:
                 pass
         return False
 
-    def disconnect(self):
+    def disconnect(self) -> bool:
         self.ifdebug("in disconnect")
         if not self.checkauth():
             return True
@@ -95,7 +101,7 @@ class ControlMaster:
             print("in disconnect: Fail : %s" % status)
             return False
 
-    def put(self, src, dst):
+    def put(self, src: str, dst: str) -> bool:
         if not self.checkauth():
             return False
         self.ifdebug("in put")
@@ -108,7 +114,7 @@ class ControlMaster:
             print("in put: Fail : %s" % status)
             return False
 
-    def get(self, src, dst):
+    def get(self, src: str, dst: str) -> bool:
         if not self.checkauth():
             return False
         self.ifdebug("in get")
@@ -121,7 +127,7 @@ class ControlMaster:
             print("in get: Fail : %s" % status)
             return False
 
-    def rput(self):
+    def rput(self, src: str, dst: str) -> bool:
         if not self.checkauth():
             return False
         self.ifdebug("in rput")
@@ -134,7 +140,7 @@ class ControlMaster:
             print("in rput: Fail : %s" % status)
             return False
 
-    def rget(self):
+    def rget(self, src: str, dst: str) -> bool:
         if not self.checkauth():
             return False
         self.ifdebug("in rget")
@@ -147,7 +153,7 @@ class ControlMaster:
             print("in rget: Fail : %s" % status)
             return False
 
-    def exe(self, command):
+    def exe(self, command: str) -> bool | int:
         self.ifdebug("in exe")
         if not self.checkauth():
             return False
@@ -159,14 +165,14 @@ class ControlMaster:
             print("in exe: Fail : %s" % status)
             return False
 
-    def check_control_dir(self, controldir=os.environ["HOME"] + "/.controlmaster"):
+    def check_control_dir(
+        self,
+        controldir: str = os.environ["HOME"] + "/.controlmaster",
+    ) -> None:
         self.ifdebug("in check_control_dir : controldir = %s" % controldir)
         if not os.path.isdir(controldir):
             os.makedirs(controldir)
         self.controldir = controldir
-
-    def create_master_socket(self):
-        self.ifdebug("in create_master_socket")
 
 
 __all__ = [
