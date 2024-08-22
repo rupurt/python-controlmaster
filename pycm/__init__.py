@@ -1,9 +1,11 @@
 import sys
 
-from pycm.control_master import ControlMaster
+from pycm.master_connection import MasterConnection
+from pycm.slave_connection import SlaveConnection
 
 __all__ = [
-    "ControlMaster",
+    "MasterConnection",
+    "SlaveConnection",
 ]
 
 if __name__ == "__main__":
@@ -13,7 +15,7 @@ if __name__ == "__main__":
         debug = sys.argv[2] in ["True", "true", "1"]
     else:
         debug = False
-    ssh = ControlMaster(host, debug=debug)
+    ssh = SecondaryConnection(host, debug=debug)
     ssh.connect()
     ssh.exe("uptime")
     ssh.disconnect()

@@ -9,7 +9,7 @@ import time
 from typing import Any
 
 
-class ControlMaster:
+class MasterConnection:
     host: str = ""
     status: str = ""
     master_socket: str = ""
@@ -176,5 +176,5 @@ class ControlMaster:
 
 
 __all__ = [
-    "ControlMaster",
+    "MasterConnection",
 ]

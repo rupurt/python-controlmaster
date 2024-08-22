@@ -13,9 +13,9 @@ with long redirect chains especially
 ```
 
 ```python
-from pycm import ControlMaster
+from pycm import SlaveConnection
 
-ssh = ControlMaster("customhost")
+ssh = SlaveConnection("customhost")
 ssh.connect()
 ssh.put(src,dst)
 ssh.exe(cmd)
